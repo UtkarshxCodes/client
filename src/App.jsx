@@ -15,7 +15,7 @@ import { ToastContainer } from 'react-toastify'
 import Player from './pages/student/Player'
 import MyEnrollments from './pages/student/MyEnrollments'
 import Loading from './components/student/Loading'
-import AboutUs from './components/student/AboutUs';
+import AboutUs from './components/student/Aboutus';
 import ContactUs from './components/student/ContactUs';
 
 const App = () => {
