@@ -32,6 +32,25 @@ const MyCourses = () => {
     }
   }, [isEducator])
 
+  const handleEdit = (course) => {
+    // Navigate to edit page or open modal with course data
+    // On save, send PUT request to backend
+  }
+
+  const handleDelete = async (courseId) => {
+    if (!window.confirm('Are you sure you want to delete this course?')) return;
+    try {
+      const token = await getToken();
+      await axios.delete(`${backendUrl}/api/educator/course/${courseId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('Course deleted');
+      setCourses(courses.filter(course => course._id !== courseId));
+    } catch (error) {
+      toast.error(error.message);
+    }
+  }
+
   return courses ? (
     <div className="h-screen flex flex-col items-start justify-between md:p-8 md:pb-0 p-4 pt-8 pb-0">
       <div className='w-full'>
@@ -44,6 +63,7 @@ const MyCourses = () => {
                 <th className="px-4 py-3 font-semibold truncate">Earnings</th>
                 <th className="px-4 py-3 font-semibold truncate">Students</th>
                 <th className="px-4 py-3 font-semibold truncate">Published On</th>
+                <th className="px-4 py-3 font-semibold truncate">Actions</th>
               </tr>
             </thead>
             <tbody className="text-sm text-gray-500">
@@ -57,6 +77,20 @@ const MyCourses = () => {
                   <td className="px-4 py-3">{course.enrolledStudents.length}</td>
                   <td className="px-4 py-3">
                     {new Date(course.createdAt).toLocaleDateString()}
+                  </td>
+                  <td>
+                    <button
+                      className="bg-yellow-500 text-white px-2 py-1 rounded mr-2"
+                      onClick={() => handleEdit(course)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="bg-red-500 text-white px-2 py-1 rounded"
+                      onClick={() => handleDelete(course._id)}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}

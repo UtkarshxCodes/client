@@ -12,34 +12,28 @@ import Loading from '../../components/student/Loading';
 
 const CourseDetails = () => {
 
-  const { id } = useParams()
+  const { id } = useParams();
+  const { backendUrl } = useContext(AppContext)
 
   const [courseData, setCourseData] = useState(null)
   const [playerData, setPlayerData] = useState(null)
   const [isAlreadyEnrolled, setIsAlreadyEnrolled] = useState(false)
 
-  const { backendUrl, currency, userData, calculateChapterTime, calculateCourseDuration, calculateRating, calculateNoOfLectures } = useContext(AppContext)
+  const { currency, userData, calculateChapterTime, calculateCourseDuration, calculateRating, calculateNoOfLectures } = useContext(AppContext)
   const { getToken } = useAuth()
 
 
   const fetchCourseData = async () => {
-
     try {
-
       const { data } = await axios.get(backendUrl + '/api/course/' + id)
-
       if (data.success) {
         setCourseData(data.courseData)
       } else {
         toast.error(data.message)
       }
-
     } catch (error) {
-
       toast.error(error.message)
-
     }
-
   }
 
   const [openSections, setOpenSections] = useState({});
@@ -84,8 +78,12 @@ const CourseDetails = () => {
   }
 
   useEffect(() => {
-    fetchCourseData()
-  }, [])
+    fetchCourseData();
+  }, []);
+
+  useEffect(() => {
+    console.log('courseData:', courseData);
+  }, [courseData]);
 
   useEffect(() => {
 
@@ -119,7 +117,11 @@ const CourseDetails = () => {
             <p>{courseData.enrolledStudents.length} {courseData.enrolledStudents.length > 1 ? 'students' : 'student'}</p>
           </div>
 
-          <p className='text-sm'>Course by <span className='text-blue-600 underline'>{courseData.educator.name}</span></p>
+          <p className='text-sm'>
+            Course by <span className='text-blue-600 underline'>
+              {courseData.educator ? courseData.educator.name : "Unknown"}
+            </span>
+          </p>
 
           <div className="pt-8 text-gray-800">
             <h2 className="text-xl font-semibold">Course Structure</h2>
