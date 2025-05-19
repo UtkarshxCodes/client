@@ -112,7 +112,27 @@ const ContactUs = () => (
           <label htmlFor="message">Message</label>
           <textarea id="message" name="message" required placeholder="How can we help you?"></textarea>
         </div>
-        <button type="submit">Send Message</button>
+        <a
+          href="mailto:Support@v-edu.us"
+          className="first-class-send-btn"
+          style={{
+            display: 'block',
+            background: '#2563eb',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '7px',
+            padding: '1em 0',
+            fontSize: '1.13rem',
+            fontWeight: 700,
+            cursor: 'pointer',
+            marginTop: '0.5em',
+            textAlign: 'center',
+            textDecoration: 'none',
+            boxShadow: '0 2px 8px rgba(37,99,235,0.07)'
+          }}
+        >
+          Send Message
+        </a>
       </form>
       <div className="address">
         <strong>Address:</strong><br />
@@ -120,7 +140,7 @@ const ContactUs = () => (
         Cheyenne, WY 82001
       </div>
       <div className="contact-info">
-        <strong>Phone:</strong> +1 307-216-4424<br />
+        <strong>Phone:</strong> +1 888-344-4990<br />
         <strong>Email:</strong> <a href="mailto:support@v-edu.us">support@v-edu.us</a>
       </div>
     </div>

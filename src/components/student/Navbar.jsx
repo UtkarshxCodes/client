@@ -37,7 +37,16 @@ const Navbar = ({ jobsRef }) => {
   };
 
   const handleScrollToJobs = () => {
-    window.dispatchEvent(new CustomEvent('scrollToJobsSection'));
+    if (location.pathname === "/") {
+      // Already on home, just scroll
+      window.dispatchEvent(new CustomEvent('scrollToJobsSection'));
+    } else {
+      // Navigate to home, then scroll after navigation
+      navigate('/');
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('scrollToJobsSection'));
+      }, 100); // Delay to ensure Home is mounted
+    }
   };
 
   const handleCoursesClick = () => {
@@ -85,6 +94,14 @@ const Navbar = ({ jobsRef }) => {
         <div className="flex items-center gap-5">
           {user && (
             <>
+              {/* Contact Info Button */}
+              <a
+                href="tel:+18883444990"
+                className="text-blue-900 font-semibold hover:underline flex items-center gap-1"
+                style={{ whiteSpace: 'nowrap' }}
+              >
+                Got doubt? - +1 888-344-4990
+              </a>
               {/* <button onClick={becomeEducator}>
                 {isEducator ? 'Educator Dashboard' : 'Become Educator'}
               </button> */}

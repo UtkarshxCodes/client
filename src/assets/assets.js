@@ -44,6 +44,7 @@ import profile_img3 from './profile_img3.png'
 import lesson_icon from './lesson_icon.svg'
 import backgroundImage from './backgroundImage.png'; // Import the background image
 import videolms from './videolms.mp4';
+import map from './map.png';
 
 export const assets = {
     logo,
@@ -92,6 +93,7 @@ export const assets = {
     lesson_icon,
     backgroundImage, // Add the background image here
     videolms,
+    map,
 }
 
 export const dummyTestimonial = [

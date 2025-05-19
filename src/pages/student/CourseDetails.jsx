@@ -50,6 +50,7 @@ const CourseDetails = () => {
 
 
   const enrollCourse = async () => {
+    console.log('userData:', userData); // Add this line
 
     try {
 
@@ -287,9 +288,27 @@ const CourseDetails = () => {
           Complete this course and receive an industry-recognized certificate to showcase your achievement and boost your career prospects.
         </p>
         <div className="flex flex-wrap gap-6 justify-center">
-          <img src={certificate1} alt="Certificate 1" className="h-36 rounded-lg shadow-md border" />
-          <img src={certificate2} alt="Certificate 2" className="h-36 rounded-lg shadow-md border" />
-          <img src={certificate3} alt="Certificate 3" className="h-36 rounded-lg shadow-md border" />
+          {/* Conditional rendering based on course title */}
+          {courseData.courseTitle === "Data Science and Machine Learning" && (
+            <>
+              <img src={certificate1} alt="Certificate 1" className="h-36 rounded-lg shadow-md border" />
+              <img src={certificate2} alt="Certificate 2" className="h-36 rounded-lg shadow-md border" />
+            </>
+          )}
+          {courseData.courseTitle === "Cybersecurity & Ethical Hacking" && (
+            <>
+              <img src={certificate2} alt="Certificate 2" className="h-36 rounded-lg shadow-md border" />
+              <img src={certificate3} alt="Certificate 3" className="h-36 rounded-lg shadow-md border" />
+            </>
+          )}
+          {/* Default: show all certificates for other courses */}
+          {courseData.courseTitle !== "Data Science and Machine Learning" &&
+            courseData.courseTitle !== "Cybersecurity & Ethical Hacking" && (
+              <>
+                <img src={certificate1} alt="Certificate 1" className="h-36 rounded-lg shadow-md border" />
+                <img src={certificate2} alt="Certificate 2" className="h-36 rounded-lg shadow-md border" />
+              </>
+            )}
         </div>
       </div>
 
