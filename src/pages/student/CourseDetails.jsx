@@ -9,6 +9,9 @@ import humanizeDuration from 'humanize-duration'
 import YouTube from 'react-youtube';
 import { useAuth } from '@clerk/clerk-react';
 import Loading from '../../components/student/Loading';
+import certificate1 from '../../assets/certificate1.png';
+import certificate2 from '../../assets/certificate2.png';
+import certificate3 from '../../assets/certificate3.png';
 
 const CourseDetails = () => {
 
@@ -106,26 +109,68 @@ const CourseDetails = () => {
           </p>
 
           <div className='flex items-center space-x-2 pt-3 pb-1 text-sm'>
-            <p>{calculateRating(courseData)}</p>
+            <p>5</p>
             <div className='flex'>
-              {[...Array(5)].map((_, i) => (<img key={i} src={i < Math.floor(calculateRating(courseData)) ? assets.star : assets.star_blank} alt=''
-                className='w-3.5 h-3.5' />
+              {[...Array(5)].map((_, i) => (
+                <img key={i} src={assets.star} alt='' className='w-3.5 h-3.5' />
               ))}
             </div>
-            <p className='text-blue-600'>({courseData.courseRatings.length} {courseData.courseRatings.length > 1 ? 'ratings' : 'rating'})</p>
-
+            <p className='text-blue-600'>(1 rating)</p>
             <p>{courseData.enrolledStudents.length} {courseData.enrolledStudents.length > 1 ? 'students' : 'student'}</p>
           </div>
 
           <p className='text-sm'>
             Course by <span className='text-blue-600 underline'>
-              {courseData.educator ? courseData.educator.name : "Unknown"}
+              {courseData.educator ? courseData.educator.name : "david watts"}
             </span>
           </p>
 
           <div className="pt-8 text-gray-800">
             <h2 className="text-xl font-semibold">Course Structure</h2>
-            <div className="pt-5">
+
+            {/* Universal IT Course Roadmap */}
+            <div className="w-full flex flex-col items-center mb-4 mt-4">
+              <div className="flex flex-row items-center justify-center gap-0 md:gap-4 w-full overflow-x-auto">
+                {/* Step 1 */}
+                <div className="flex flex-col items-center min-w-[100px]">
+                  <div className="bg-blue-600 text-white rounded-full w-12 h-12 flex items-center justify-center text-lg font-bold shadow-md">1</div>
+                  <span className="mt-2 text-xs md:text-sm font-semibold text-blue-700">Intro</span>
+                </div>
+                <div className="w-8 h-1 bg-blue-300 rounded-full mx-1 md:mx-2"></div>
+                {/* Step 2 */}
+                <div className="flex flex-col items-center min-w-[100px]">
+                  <div className="bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center text-lg font-bold shadow-md">2</div>
+                  <span className="mt-2 text-xs md:text-sm font-semibold text-blue-700">Fundamentals</span>
+                </div>
+                <div className="w-8 h-1 bg-blue-300 rounded-full mx-1 md:mx-2"></div>
+                {/* Step 3 */}
+                <div className="flex flex-col items-center min-w-[100px]">
+                  <div className="bg-blue-400 text-white rounded-full w-12 h-12 flex items-center justify-center text-lg font-bold shadow-md">3</div>
+                  <span className="mt-2 text-xs md:text-sm font-semibold text-blue-700">Core Modules</span>
+                </div>
+                <div className="w-8 h-1 bg-blue-300 rounded-full mx-1 md:mx-2"></div>
+                {/* Step 4 */}
+                <div className="flex flex-col items-center min-w-[100px]">
+                  <div className="bg-blue-300 text-white rounded-full w-12 h-12 flex items-center justify-center text-lg font-bold shadow-md">4</div>
+                  <span className="mt-2 text-xs md:text-sm font-semibold text-blue-700">Project/Capstone</span>
+                </div>
+                <div className="w-8 h-1 bg-blue-300 rounded-full mx-1 md:mx-2"></div>
+                {/* Step 5 */}
+                <div className="flex flex-col items-center min-w-[100px]">
+                  <div className="bg-blue-200 text-blue-700 rounded-full w-12 h-12 flex items-center justify-center text-lg font-bold shadow-md border border-blue-400">5</div>
+                  <span className="mt-2 text-xs md:text-sm font-semibold text-blue-700">Assessments</span>
+                </div>
+                <div className="w-8 h-1 bg-blue-300 rounded-full mx-1 md:mx-2"></div>
+                {/* Step 6 */}
+                <div className="flex flex-col items-center min-w-[100px]">
+                  <div className="bg-green-400 text-white rounded-full w-12 h-12 flex items-center justify-center text-lg font-bold shadow-md">6</div>
+                  <span className="mt-2 text-xs md:text-sm font-semibold text-green-700">Certifications</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Course Content */}
+            <div className="pt-2">
               {courseData.courseContent.map((chapter, index) => (
                 <div key={index} className="border border-gray-300 bg-white mb-2 rounded">
                   <div
@@ -162,10 +207,22 @@ const CourseDetails = () => {
             </div>
           </div>
 
-          <div className="py-20 text-sm md:text-default">
-            <h3 className="text-xl font-semibold text-gray-800">Course Description</h3>
-            <p className="rich-text pt-3" dangerouslySetInnerHTML={{ __html: courseData.courseDescription }}>
-            </p>
+          <div className="py-10 text-base md:text-lg">
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">Course Description</h3>
+            <div
+              className="rich-text pt-3"
+              style={{ fontSize: "1.1rem", lineHeight: "1.7" }}
+              dangerouslySetInnerHTML={{
+                __html: courseData.courseDescription
+                  .replace(/<ol/gi, '<ul')
+                  .replace(/<\/ol>/gi, '</ul>')
+                  .replace(/<li/gi, '<li style="list-style-type: disc; margin-left: 1.5em;">')
+                  .replace(/ ?data-list="bullet">?/gi, '')   // Remove data-list="bullet"> and any space before
+                  .replace(/ ?data-list="bullet"/gi, '')     // Remove any stray data-list="bullet"
+                  .replace(/ ?data-list="ordered">?/gi, '')  // Remove data-list="ordered"> and any space before
+                  .replace(/ ?data-list="ordered"/gi, '')    // Remove any stray data-list="ordered"
+              }}
+            />
           </div>
         </div>
 
@@ -190,17 +247,17 @@ const CourseDetails = () => {
             <div className="flex items-center text-sm md:text-default gap-4 pt-2 md:pt-4 text-gray-500">
               <div className="flex items-center gap-1">
                 <img src={assets.star} alt="star icon" />
-                <p>{calculateRating(courseData)}</p>
+                <p>{calculateRating(courseData) ?? 0}</p>
               </div>
               <div className="h-4 w-px bg-gray-500/40"></div>
               <div className="flex items-center gap-1">
                 <img src={assets.time_clock_icon} alt="clock icon" />
-                <p>{calculateCourseDuration(courseData)}</p>
+                <p>{calculateCourseDuration(courseData) || '0 minutes'}</p>
               </div>
               <div className="h-4 w-px bg-gray-500/40"></div>
               <div className="flex items-center gap-1">
                 <img src={assets.lesson_icon} alt="clock icon" />
-                <p>{calculateNoOfLectures(courseData)} lessons</p>
+                <p>{calculateNoOfLectures(courseData) ?? 0} lessons</p>
               </div>
             </div>
             <button onClick={enrollCourse} className="md:mt-6 mt-4 w-full py-3 rounded bg-blue-600 text-white font-medium">
@@ -219,6 +276,126 @@ const CourseDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* Certification Provided Section */}
+      <div className="my-12 px-4 py-8 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl shadow-lg flex flex-col items-center">
+        <h2 className="text-2xl md:text-3xl font-bold text-blue-700 mb-4 flex items-center gap-2">
+          <img src={assets.blue_tick_icon} alt="tick" className="w-7 h-7" />
+          Certification of Completion
+        </h2>
+        <p className="text-gray-600 mb-6 text-center max-w-2xl">
+          Complete this course and receive an industry-recognized certificate to showcase your achievement and boost your career prospects.
+        </p>
+        <div className="flex flex-wrap gap-6 justify-center">
+          <img src={certificate1} alt="Certificate 1" className="h-36 rounded-lg shadow-md border" />
+          <img src={certificate2} alt="Certificate 2" className="h-36 rounded-lg shadow-md border" />
+          <img src={certificate3} alt="Certificate 3" className="h-36 rounded-lg shadow-md border" />
+        </div>
+      </div>
+
+      {/* Career Support & Job Opportunities */}
+      <div className="my-12 px-4 py-10 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-xl shadow-lg flex flex-col items-center">
+        <h2 className="text-2xl md:text-3xl font-bold text-blue-700 mb-2 flex items-center gap-2">
+          <svg className="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5zm0 7v-6m0 0l-9-5m9 5l9-5" /></svg>
+          Career Support & Job Opportunities
+        </h2>
+        <p className="text-gray-600 mb-8 text-center max-w-2xl text-lg font-medium">
+          Get Career-Ready with Industry Support
+        </p>
+        <div className="grid md:grid-cols-3 gap-8 w-full max-w-5xl">
+          {/* Card 1 */}
+          <div className="bg-white rounded-lg shadow p-6 flex flex-col items-start border border-blue-100">
+            <h3 className="text-lg font-semibold text-blue-600 mb-2 flex items-center gap-2">
+              <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 01-8 0M12 14v7m-7-7a7 7 0 0114 0v7H5v-7z" /></svg>
+              Personalized Job Assistance
+            </h3>
+            <ul className="list-disc ml-5 text-gray-600 text-sm space-y-1">
+              <li>Resume & LinkedIn profile optimization</li>
+              <li>Mock interviews & technical screening</li>
+              <li>Portfolio & GitHub project reviews</li>
+            </ul>
+          </div>
+          {/* Card 2 */}
+          <div className="bg-white rounded-lg shadow p-6 flex flex-col items-start border border-blue-100">
+            <h3 className="text-lg font-semibold text-blue-600 mb-2 flex items-center gap-2">
+              <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 17v-2a4 4 0 018 0v2m-4-4V7m0 0V3m0 4a4 4 0 00-4 4v4" /></svg>
+              Interview Preparation Toolkit
+            </h3>
+            <ul className="list-disc ml-5 text-gray-600 text-sm space-y-1">
+              <li>Most-asked interview questions</li>
+              <li>Role-specific skill assessments</li>
+              <li>Insider tips from industry experts</li>
+            </ul>
+          </div>
+          {/* Card 3 */}
+          <div className="bg-white rounded-lg shadow p-6 flex flex-col items-start border border-blue-100">
+            <h3 className="text-lg font-semibold text-blue-600 mb-2 flex items-center gap-2">
+              <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 7v4a1 1 0 001 1h3v2a1 1 0 001 1h4a1 1 0 001-1v-2h3a1 1 0 001-1V7" /></svg>
+              Global Job Market Insights
+            </h3>
+            <ul className="list-disc ml-5 text-gray-600 text-sm space-y-1">
+              <li>Trends in hiring for your field</li>
+              <li>Job alerts & recommendations</li>
+              <li>Salary guides by experience & region</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Career Paths */}
+        <div className="w-full max-w-5xl mt-12">
+          <h3 className="text-xl font-semibold text-blue-700 mb-4">Career Paths You Can Pursue</h3>
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Data Science & AI */}
+            <div className="bg-white rounded-lg shadow p-5 border border-blue-100">
+              <h4 className="font-semibold text-blue-600 mb-2">For Data Science & AI</h4>
+              <ul className="list-disc ml-5 text-gray-600 text-sm space-y-1">
+                <li>Data Scientist</li>
+                <li>Machine Learning Engineer</li>
+                <li>AI Analyst</li>
+                <li>Business Intelligence Developer</li>
+              </ul>
+            </div>
+            {/* Cybersecurity & Ethical Hacking */}
+            <div className="bg-white rounded-lg shadow p-5 border border-blue-100">
+              <h4 className="font-semibold text-blue-600 mb-2">For Cybersecurity & Ethical Hacking</h4>
+              <ul className="list-disc ml-5 text-gray-600 text-sm space-y-1">
+                <li>Security Analyst</li>
+                <li>Penetration Tester</li>
+                <li>SOC Analyst</li>
+                <li>Cybersecurity Consultant</li>
+              </ul>
+            </div>
+            {/* DevOps & Cloud Computing */}
+            <div className="bg-white rounded-lg shadow p-5 border border-blue-100">
+              <h4 className="font-semibold text-blue-600 mb-2">For DevOps & Cloud Computing</h4>
+              <ul className="list-disc ml-5 text-gray-600 text-sm space-y-1">
+                <li>DevOps Engineer</li>
+                <li>Site Reliability Engineer (SRE)</li>
+                <li>Cloud Solutions Architect</li>
+                <li>Infrastructure as Code (IaC) Specialist</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Top Companies */}
+        <div className="w-full max-w-5xl mt-12">
+          <h3 className="text-xl font-semibold text-blue-700 mb-4">Top Companies Hiring in These Domains</h3>
+          <div className="flex flex-wrap gap-4 justify-center text-lg text-gray-700 font-medium">
+            <span className="bg-blue-100 px-4 py-2 rounded-full">Google</span>
+            <span className="bg-blue-100 px-4 py-2 rounded-full">Amazon</span>
+            <span className="bg-blue-100 px-4 py-2 rounded-full">TCS</span>
+            <span className="bg-blue-100 px-4 py-2 rounded-full">Deloitte</span>
+            <span className="bg-blue-100 px-4 py-2 rounded-full">Microsoft</span>
+            <span className="bg-blue-100 px-4 py-2 rounded-full">IBM</span>
+            <span className="bg-blue-100 px-4 py-2 rounded-full">Infosys</span>
+            <span className="bg-blue-100 px-4 py-2 rounded-full">Accenture</span>
+            <span className="bg-blue-100 px-4 py-2 rounded-full">Startups & Unicorns</span>
+          </div>
+          <p className="text-xs text-gray-500 mt-2 text-center">(Based on current trends and industry demand)</p>
+        </div>
+      </div>
+
       <Footer />
     </>
   ) : <Loading />
