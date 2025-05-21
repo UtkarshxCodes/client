@@ -1,8 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import './JobPostingSection.css';
+import './JobsList.css';
 
-const jobs = [
+const jobData = [
   {
     company: "NVIDIA",
     location: "USA",
@@ -10,7 +9,8 @@ const jobs = [
     description: "Work on cutting-edge artificial intelligence research projects focused on deep learning, computer vision, and model optimization.",
     positions: "5 Positions",
     type: "Full Time",
-    salary: "$160,000/Year ($76.92/hr)",
+    salary: "$160,000/Year",
+    hourly: "$76.92/hr",
     link: "/jobs/nvidia-ai-research-scientist"
   },
   {
@@ -20,7 +20,8 @@ const jobs = [
     description: "Design, implement, and manage cloud-based systems and services with a focus on scalable architecture and performance.",
     positions: "8 Positions",
     type: "Full Time",
-    salary: "$142,000/Year ($68.27/hr)",
+    salary: "$142,000/Year",
+    hourly: "$68.27/hr",
     link: "/jobs/ibm-cloud-solutions-architect"
   },
   {
@@ -30,7 +31,8 @@ const jobs = [
     description: "Monitor, analyze, and respond to cybersecurity threats using state-of-the-art tools and incident response practices.",
     positions: "10 Positions",
     type: "Full Time",
-    salary: "$120,000/Year ($57.69/hr)",
+    salary: "$120,000/Year",
+    hourly: "$57.69/hr",
     link: "/jobs/crowdstrike-cybersecurity-analyst"
   },
   {
@@ -40,7 +42,8 @@ const jobs = [
     description: "Analyze large datasets to generate business insights and build predictive models to support data-driven decisions.",
     positions: "7 Positions",
     type: "Full Time",
-    salary: "$155,000/Year ($74.52/hr)",
+    salary: "$155,000/Year",
+    hourly: "$74.52/hr",
     link: "/jobs/meta-data-scientist"
   },
   {
@@ -50,7 +53,8 @@ const jobs = [
     description: "Build and automate infrastructure for cloud platforms with a focus on continuous integration and deployment pipelines.",
     positions: "4 Positions",
     type: "Full Time",
-    salary: "$138,000/Year ($66.35/hr)",
+    salary: "$138,000/Year",
+    hourly: "$66.35/hr",
     link: "/jobs/oracle-cloud-devops-engineer"
   },
   {
@@ -60,37 +64,40 @@ const jobs = [
     description: "Design and implement secure network infrastructures and provide real-time monitoring of potential cyber threats.",
     positions: "6 Positions",
     type: "Full Time",
-    salary: "$110,000/Year ($52.88/hr)",
+    salary: "$110,000/Year",
+    hourly: "$52.88/hr",
     link: "/jobs/cisco-network-security-engineer"
   }
 ];
 
-const JobPostingSection = () => (
-  <section className="section__container job__container" id="job">
-    <h2 className="text-3xl font-bold text-center text-blue-800 mb-2">Latest & Top Job Openings</h2>
-    <p className="text-center text-gray-600 mb-10">
-      Discover exciting new opportunities in Data Science, AI, Cloud, Cybersecurity, and more — across top US-based companies.
-    </p>
-    <div className="job__grid">
-      {jobs.map((job, idx) => (
-        <Link to="/jobs" key={idx} className="job__card block hover:shadow-lg transition">
-          <div className="job__card__header-nologo">
-            <div>
-              <h5 className="job__company">{job.company}</h5>
-              <h6 className="job__location">{job.location}</h6>
+const JobsList = ({ setShowRegistration }) => (
+  <section className="jobs-list-section">
+    <div className="jobs-list-container">
+      <h2 className="jobs-list-title">All Job Openings</h2>
+      <div className="jobs-list-horizontal">
+        {jobData.map((job, index) => (
+          <div key={index} className="jobs-list-card">
+            <div className="jobs-list-card-main">
+              <h3>{job.role} <span className="company">@ {job.company}</span></h3>
+              <p className="location">{job.location} — {job.type}</p>
+              <p className="desc">{job.description}</p>
+              <div className="jobs-list-meta">
+                <span>{job.positions}</span>
+                <span className="salary">{job.salary}</span>
+                <span className="hourly">{job.hourly}</span>
+              </div>
             </div>
+            <button
+              className="apply-btn"
+              onClick={() => setShowRegistration(true)}
+            >
+              Apply Now
+            </button>
           </div>
-          <h4 className="job__role">{job.role}</h4>
-          <p className="job__desc">{job.description}</p>
-          <div className="job__card__footer">
-            <span>{job.positions}</span>
-            <span>{job.type}</span>
-            <span>{job.salary}</span>
-          </div>
-        </Link>
-      ))}
+        ))}
+      </div>
     </div>
   </section>
 );
 
-export default JobPostingSection;
+export default JobsList;

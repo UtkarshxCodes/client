@@ -4,16 +4,7 @@ import { assets } from '../../assets/assets'
 import { AppContext } from '../../context/AppContext'
 
 const CourseCard = ({ course }) => {
-
     const { currency } = useContext(AppContext)
-
-    // Always show 5 stars and never show zero for ratings or ratings count
-    const displayRating = course.courseRatings && course.courseRatings.length > 0
-        ? (course.courseRatings.reduce((a, b) => a + b, 0) / course.courseRatings.length).toFixed(1)
-        : "5.0";
-    const displayRatingsCount = course.courseRatings && course.courseRatings.length > 0
-        ? course.courseRatings.length
-        : 1;
 
     return (
         <Link onClick={() => scrollTo(0, 0)} to={'/course/' + course._id} className="border border-gray-500/30 pb-6 overflow-hidden rounded-lg">
@@ -21,12 +12,12 @@ const CourseCard = ({ course }) => {
             <div className="p-3 text-left">
                 <h3 className="text-base font-semibold">{course.courseTitle}</h3>
                 <p className="text-gray-500">
-                    {course.educator?.name || "david watts"}
+                    David Watts
                 </p>
                 <div className="flex items-center space-x-2">
-                    <p>5.0</p>
+                    <p>4.5</p>
                     <div className="flex">
-                        {[...Array(5)].map((_, i) => (
+                        {[...Array(4)].map((_, i) => (
                             <img
                                 key={i}
                                 className="w-3.5 h-3.5"
@@ -34,12 +25,25 @@ const CourseCard = ({ course }) => {
                                 alt=""
                             />
                         ))}
+                        <img
+                            className="w-3.5 h-3.5"
+                            src={assets.star_half || assets.star}
+                            alt=""
+                        />
                     </div>
-                    <p className="text-gray-500">
-                        ({Math.max(course.enrolledStudents?.length || 0, 5)} students)
-                    </p>
+                    <p className="text-blue-600">(71 ratings)</p>
+                    <p>62 students</p>
                 </div>
                 <p className="text-base font-semibold text-gray-800">{currency}{(course.coursePrice - course.discount * course.coursePrice / 100).toFixed(2)}</p>
+                <p className="md:text-lg text-gray-500">0% off</p>
+                <div className="flex items-center gap-1">
+                    <img src={assets.time_clock_icon} alt="clock icon" />
+                    <p>62 minutes</p>
+                </div>
+                <div className="flex items-center gap-1">
+                    <img src={assets.lesson_icon} alt="clock icon" />
+                    <p>12 lessons</p>
+                </div>
             </div>
         </Link>
     )

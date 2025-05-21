@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { Routes, Route, useLocation, useMatch } from 'react-router-dom'
 import Navbar from './components/student/Navbar'
 import Home from './pages/student/Home'
@@ -17,8 +17,17 @@ import MyEnrollments from './pages/student/MyEnrollments'
 import Loading from './components/student/Loading'
 import AboutUs from './components/student/Aboutus';
 import ContactUs from './components/student/ContactUs';
+import JobsList from './pages/student/JobsList';
+import CourseRegistration from './components/student/CourseRegistration';
 
 const App = () => {
+  const [showRegistration, setShowRegistration] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    mobile: "",
+    course: "",
+  });
 
   const isEducatorRoute = useMatch('/educator/*');
 
@@ -28,7 +37,14 @@ const App = () => {
       {/* Render Student Navbar only if not on educator routes */}
       {!isEducatorRoute && <Navbar />}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={
+          <Home
+            showRegistration={showRegistration}
+            setShowRegistration={setShowRegistration}
+            formData={formData}
+            setFormData={setFormData}
+          />
+        } />
         <Route path="/course/:id" element={<CourseDetails />} />
         <Route path="/course-list" element={<CoursesList />} />
         <Route path="/course-list/:input" element={<CoursesList />} />
@@ -37,6 +53,15 @@ const App = () => {
         <Route path="/loading/:path" element={<Loading />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/contact" element={<ContactUs />} />
+        <Route path="/jobs" element={
+          <JobsList
+            showRegistration={showRegistration}
+            setShowRegistration={setShowRegistration}
+            formData={formData}
+            setFormData={setFormData}
+          />
+        } />
+        <Route path="/register" element={<CourseRegistration />} />
         <Route path='/educator' element={<Educator />}>
           <Route path='/educator' element={<Dashboard />} />
           <Route path='add-course' element={<AddCourse />} />
@@ -44,6 +69,12 @@ const App = () => {
           <Route path='student-enrolled' element={<StudentsEnrolled />} />
         </Route>
       </Routes>
+      <CourseRegistration
+        isOpen={showRegistration}
+        setIsOpen={setShowRegistration}
+        formData={formData}
+        setFormData={setFormData}
+      />
     </div>
   )
 }

@@ -12,6 +12,7 @@ import Loading from '../../components/student/Loading';
 import certificate1 from '../../assets/certificate1.png';
 import certificate2 from '../../assets/certificate2.png';
 import certificate3 from '../../assets/certificate3.png';
+import PaymentModal from '../../components/student/Paymentmodel';
 
 const CourseDetails = () => {
 
@@ -21,6 +22,9 @@ const CourseDetails = () => {
   const [courseData, setCourseData] = useState(null)
   const [playerData, setPlayerData] = useState(null)
   const [isAlreadyEnrolled, setIsAlreadyEnrolled] = useState(false)
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [couponError, setCouponError] = useState("");
 
   const { currency, userData, calculateChapterTime, calculateCourseDuration, calculateRating, calculateNoOfLectures } = useContext(AppContext)
   const { getToken } = useAuth()
@@ -71,7 +75,7 @@ const CourseDetails = () => {
 
       if (data.success) {
         const { session_url } = data
-        window.location.replace(session_url)
+        window.location.replace(session_url) // Redirects to Stripe Checkout
       } else {
         toast.error(data.message)
       }
@@ -97,6 +101,126 @@ const CourseDetails = () => {
 
   }, [userData, courseData])
 
+  // Countdown Timer Logic
+  const [timeLeft, setTimeLeft] = useState({ days: 4, hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    // Set countdown to 4 days from first render
+    const endTime = Date.now() + 4 * 24 * 60 * 60 * 1000;
+    const timer = setInterval(() => {
+      const now = Date.now();
+      const diff = endTime - now;
+      if (diff <= 0) {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        clearInterval(timer);
+      } else {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+        setTimeLeft({ days, hours, minutes, seconds });
+      }
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleStripePayment = async () => {
+    setShowPaymentModal(false);
+    // ...your Stripe payment code...
+  };
+
+  // PayPal payment logic
+  const handlePaypalPayment = async () => {
+    setShowPaymentModal(false);
+    try {
+      if (!userData) return toast.warn('Login to Enroll');
+      if (isAlreadyEnrolled) return toast.warn('Already Enrolled');
+      const token = await getToken();
+      const { data } = await axios.post(
+        backendUrl + '/api/user/paypal-create-order',
+        { courseId: courseData._id },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (data.success) {
+        window.location.replace(data.approvalUrl); // Redirect to PayPal approval page
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const handleApplyCoupon = (code) => {
+    switch (code) {
+      case "vedu100":
+        setDiscountAmount(100);
+        setCouponError("");
+        break;
+      case "v-edu20":
+        setDiscountAmount(199);
+        setCouponError("");
+        break;
+      case "v-edu3":
+        setDiscountAmount(299);
+        setCouponError("");
+        break;
+      case "V-Edu50":
+        setDiscountAmount(500);
+        setCouponError("");
+        break;
+      case "V-EDU7":
+        setDiscountAmount(699);
+        setCouponError("");
+        break;
+      default:
+        setDiscountAmount(0);
+        setCouponError("Invalid coupon code");
+    }
+  };
+
+  const handleStripePay = async (amount, coupon) => {
+    setShowPaymentModal(false);
+    try {
+      if (!userData) return toast.warn('Login to Enroll');
+      if (isAlreadyEnrolled) return toast.warn('Already Enrolled');
+      const token = await getToken();
+      const { data } = await axios.post(
+        backendUrl + '/api/user/purchase',
+        { courseId: courseData._id, amount, coupon },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (data.success) {
+        window.location.replace(data.session_url);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const handlePaypalPay = async (amount, coupon) => {
+    setShowPaymentModal(false);
+    try {
+      if (!userData) return toast.warn('Login to Enroll');
+      if (isAlreadyEnrolled) return toast.warn('Already Enrolled');
+      const token = await getToken();
+      const { data } = await axios.post(
+        backendUrl + '/api/user/paypal-create-order',
+        { courseId: courseData._id, amount, coupon },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (data.success) {
+        window.location.replace(data.approvalUrl);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   return courseData ? (
     <>
       <div className="flex md:flex-row flex-col-reverse gap-10 relative items-start justify-between md:px-36 px-8 md:pt-20 pt-10 text-left">
@@ -110,20 +234,19 @@ const CourseDetails = () => {
           </p>
 
           <div className='flex items-center space-x-2 pt-3 pb-1 text-sm'>
-            <p>5</p>
+            <p>4.5</p>
             <div className='flex'>
-              {[...Array(5)].map((_, i) => (
+              {[...Array(4)].map((_, i) => (
                 <img key={i} src={assets.star} alt='' className='w-3.5 h-3.5' />
               ))}
+              <img src={assets.star_half || assets.star} alt='' className='w-3.5 h-3.5' />
             </div>
-            <p className='text-blue-600'>(1 rating)</p>
-            <p>{courseData.enrolledStudents.length} {courseData.enrolledStudents.length > 1 ? 'students' : 'student'}</p>
+            <p className='text-blue-600'>(71 ratings)</p>
+            <p>62 students</p>
           </div>
 
           <p className='text-sm'>
-            Course by <span className='text-blue-600 underline'>
-              {courseData.educator ? courseData.educator.name : "david watts"}
-            </span>
+            Course by <span className='text-blue-600 underline'>David Watts</span>
           </p>
 
           <div className="pt-8 text-gray-800">
@@ -237,31 +360,33 @@ const CourseDetails = () => {
             <div className="flex items-center gap-2">
               <img className="w-3.5" src={assets.time_left_clock_icon} alt="time left clock icon" />
               <p className="text-red-500">
-                <span className="font-medium">5 days</span> left at this price!
+                <span className="font-medium">
+                  {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s
+                </span> left at this price!
               </p>
             </div>
             <div className="flex gap-3 items-center pt-2">
               <p className="text-gray-800 md:text-4xl text-2xl font-semibold">{currency}{(courseData.coursePrice - courseData.discount * courseData.coursePrice / 100).toFixed(2)}</p>
               <p className="md:text-lg text-gray-500 line-through">{currency}{courseData.coursePrice}</p>
-              <p className="md:text-lg text-gray-500">{courseData.discount}% off</p>
+              <p className="md:text-lg text-gray-500">0% off</p>
             </div>
             <div className="flex items-center text-sm md:text-default gap-4 pt-2 md:pt-4 text-gray-500">
               <div className="flex items-center gap-1">
                 <img src={assets.star} alt="star icon" />
-                <p>{calculateRating(courseData) ?? 0}</p>
+                <p>4.5</p>
               </div>
               <div className="h-4 w-px bg-gray-500/40"></div>
               <div className="flex items-center gap-1">
                 <img src={assets.time_clock_icon} alt="clock icon" />
-                <p>{calculateCourseDuration(courseData) || '0 minutes'}</p>
+                <p>62 minutes</p>
               </div>
               <div className="h-4 w-px bg-gray-500/40"></div>
               <div className="flex items-center gap-1">
                 <img src={assets.lesson_icon} alt="clock icon" />
-                <p>{calculateNoOfLectures(courseData) ?? 0} lessons</p>
+                <p>12 lessons</p>
               </div>
             </div>
-            <button onClick={enrollCourse} className="md:mt-6 mt-4 w-full py-3 rounded bg-blue-600 text-white font-medium">
+            <button onClick={() => setShowPaymentModal(true)} className="md:mt-6 mt-4 w-full py-3 rounded bg-blue-600 text-white font-medium">
               {isAlreadyEnrolled ? "Already Enrolled" : "Enroll Now"}
             </button>
             <div className="pt-6">
@@ -414,6 +539,17 @@ const CourseDetails = () => {
           <p className="text-xs text-gray-500 mt-2 text-center">(Based on current trends and industry demand)</p>
         </div>
       </div>
+
+      <PaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        coursePrice={courseData.coursePrice}
+        discountAmount={discountAmount}
+        onApplyCoupon={handleApplyCoupon}
+        couponError={couponError}
+        onStripePay={handleStripePay}
+        onPaypalPay={handlePaypalPay}
+      />
 
       <Footer />
     </>
