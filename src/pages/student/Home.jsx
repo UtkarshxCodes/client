@@ -91,7 +91,7 @@ const Home = () => {
         'Content-Type': 'application/json',
         'Origin': window.location.origin
       },
-      body: JSON.stringify({ courseId: REGISTRATION_COURSE_ID }),
+      body: JSON.stringify({ courseId: REGISTRATION_COURSE_ID, paymentMethod: "stripe" }),
     });
     const data = await res.json();
     if (data.success && data.session_url) {
@@ -103,13 +103,13 @@ const Home = () => {
 
   const handlePaypalPay = async () => {
     setShowPaymentModal(false);
-    const res = await fetch('/api/user/paypal-create-order', {
+    const res = await fetch('/api/user/purchase', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
         'Origin': window.location.origin
       },
-      body: JSON.stringify({ courseId: REGISTRATION_COURSE_ID }),
+      body: JSON.stringify({ courseId: REGISTRATION_COURSE_ID, paymentMethod: "paypal" }),
     });
     const data = await res.json();
     if (data.success && data.approvalUrl) {

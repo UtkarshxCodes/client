@@ -18,13 +18,13 @@ const CourseRegistration = ({ isOpen, setIsOpen, formData, setFormData }) => {
       body: JSON.stringify(formData),
     });
     // Directly initiate PayPal payment for $99 registration
-    const res = await fetch('/api/user/paypal-create-order', {
+    const res = await fetch('/api/user/purchase', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
         'Origin': window.location.origin
       },
-      body: JSON.stringify({ courseId: REGISTRATION_COURSE_ID }),
+      body: JSON.stringify({ courseId: REGISTRATION_COURSE_ID, paymentMethod: "paypal" }),
     });
     const data = await res.json();
     setLoading(false);

@@ -179,6 +179,7 @@ const CourseDetails = () => {
     }
   };
 
+  // Stripe Payment Handler
   const handleStripePay = async (amount, coupon) => {
     setShowPaymentModal(false);
     try {
@@ -187,10 +188,10 @@ const CourseDetails = () => {
       const token = await getToken();
       const { data } = await axios.post(
         backendUrl + '/api/user/purchase',
-        { courseId: courseData._id, amount, coupon },
+        { courseId: courseData._id, amount, coupon, paymentMethod: "stripe" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      if (data.success) {
+      if (data.success && data.session_url) {
         window.location.replace(data.session_url);
       } else {
         toast.error(data.message);
@@ -200,6 +201,7 @@ const CourseDetails = () => {
     }
   };
 
+  // PayPal Payment Handler (Unified)
   const handlePaypalPay = async (amount, coupon) => {
     setShowPaymentModal(false);
     try {
@@ -207,11 +209,11 @@ const CourseDetails = () => {
       if (isAlreadyEnrolled) return toast.warn('Already Enrolled');
       const token = await getToken();
       const { data } = await axios.post(
-        backendUrl + '/api/user/paypal-create-order',
-        { courseId: courseData._id, amount, coupon },
+        backendUrl + '/api/user/purchase',
+        { courseId: courseData._id, amount, coupon, paymentMethod: "paypal" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      if (data.success) {
+      if (data.success && data.approvalUrl) {
         window.location.replace(data.approvalUrl);
       } else {
         toast.error(data.message);
@@ -547,8 +549,9 @@ const CourseDetails = () => {
         discountAmount={discountAmount}
         onApplyCoupon={handleApplyCoupon}
         couponError={couponError}
-        onStripePay={handleStripePay}
-        onPaypalPay={handlePaypalPay}
+        onStripePay={() => handleStripePay(discountAmount, coupon)}
+        onPaypalPay={() => handlePaypalPay(discountAmount, coupon)}
+        courseData={courseData}
       />
 
       <Footer />
